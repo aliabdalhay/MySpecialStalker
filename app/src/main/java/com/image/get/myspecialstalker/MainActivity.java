@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -24,15 +25,14 @@ public class MainActivity extends AppCompatActivity {
     private static String currentPhoneNumber;
     private static final int PERMISSIONS_CODE = 1;
 
-    public static final String CURRENT_PHONE_NUMBER = "phone number";
-    public static final String CURRENT_MESSAGE = "message";
-
 
     public static final String READY_MSG = "Ready to Send SMS!";
     public static final String NOT_READY_MSG = "Please Fill All Fields";
+
+
     TextView phoneData;
     TextView messageData;
-    TextView inst;
+    TextView title;
 
     EditText phoneNumber;
     EditText message;
@@ -86,21 +86,21 @@ public class MainActivity extends AppCompatActivity {
 
         messageData = (TextView)findViewById(R.id.textView_message);
         phoneData = (TextView) findViewById(R.id.textView_number);
-        inst = (TextView) findViewById(R.id.inst);
+        title = (TextView) findViewById(R.id.inst);
 
-        messageData.setVisibility(View.INVISIBLE);
-        phoneData.setVisibility(View.INVISIBLE);
+        messageData.setVisibility(View.VISIBLE);
+        phoneData.setVisibility(View.VISIBLE);
 
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         editor = sp.edit();
 
-        String current_phone_number = sp.getString(CURRENT_PHONE_NUMBER, "");
-        String current_message = sp.getString(CURRENT_MESSAGE, "");
+        String current_phone_number = sp.getString("phone number", "");
+        String current_message = sp.getString("message", "");
 
         currentPhoneNumber = current_phone_number;
         currentMessage = current_message;
         boolean cur_phone = sp.getBoolean("is current phone valid", false);
-        boolean cur_msg = sp.getBoolean("is current message valid", true);
+        boolean cur_msg = sp.getBoolean("is current message valid", false);
         isPhoneValid = cur_phone;
         isMessageValid = cur_msg;
         phoneNumber.setText(current_phone_number);
@@ -108,11 +108,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (cur_phone && cur_msg)
         {
-            inst.setText(READY_MSG);
+            title.setText(READY_MSG);
         }
         else
         {
-            inst.setText(NOT_READY_MSG);
+            title.setText(NOT_READY_MSG);
         }
 
         phoneNumber.addTextChangedListener(new TextWatcher() {
@@ -131,21 +131,21 @@ public class MainActivity extends AppCompatActivity {
 
                     if (isMessageValid)
                     {
-                        inst.setText(READY_MSG);
+                        title.setText(READY_MSG);
                     }
                     else
                     {
-                        inst.setText(NOT_READY_MSG);
+                        title.setText(NOT_READY_MSG);
                     }
                 }
                 else
                 {
-                    inst.setText(NOT_READY_MSG);
+                    title.setText(NOT_READY_MSG);
                     isPhoneValid = false;
                     phoneData.setVisibility(View.VISIBLE);
                 }
                 currentPhoneNumber = s.toString();
-                editor.putString(CURRENT_PHONE_NUMBER, s.toString());
+                editor.putString("phone number", s.toString());
                 editor.putBoolean("is current phone valid", isPhoneValid);
                 editor.apply();
             }
@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                 if (msg.equals(""))
                 {
                     isMessageValid = false;
-                    inst.setText(NOT_READY_MSG);
+                    title.setText(NOT_READY_MSG);
                     messageData.setVisibility(View.VISIBLE);
                 }
                 else
@@ -178,15 +178,15 @@ public class MainActivity extends AppCompatActivity {
                     messageData.setVisibility(View.INVISIBLE);
                     if (isPhoneValid)
                     {
-                        inst.setText(READY_MSG);
+                        title.setText(READY_MSG);
                     }
                     else
                     {
-                        inst.setText(NOT_READY_MSG);
+                        title.setText(NOT_READY_MSG);
                     }
                 }
                 currentMessage = s.toString();
-                editor.putString(CURRENT_MESSAGE, s.toString());
+                editor.putString("message", s.toString());
                 editor.putBoolean("is current message valid", isMessageValid);
                 editor.apply();
             }
@@ -200,6 +200,28 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == PERMISSIONS_CODE) {
+            if (grantResults.length == 3 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                setContentView(R.layout.activity_main);
+                afterPermissions();
+
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_PHONE_STATE,
+                                Manifest.permission.PROCESS_OUTGOING_CALLS,
+                                Manifest.permission.SEND_SMS}, PERMISSIONS_CODE);
+            }
+        }
+    }
+
+
+
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
