@@ -197,7 +197,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
     @Override
@@ -233,9 +232,5 @@ public class MainActivity extends AppCompatActivity {
 
         super.onRestoreInstanceState(savedInstanceState);
     }
-
-
-
-
 
 }

@@ -128,5 +128,4 @@ public class Notifications {
         send_sms(context, phoneNumber, message, sentPI, deliveredPI, sendSMS, deliverSMS);
     }
 
-
 }
