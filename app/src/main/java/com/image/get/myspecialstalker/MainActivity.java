@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     private static String currentPhoneNumber;
     private static final int PERMISSIONS_CODE = 1;
 
-
     public static final String READY_MSG = "Ready to Send SMS!";
     public static final String NOT_READY_MSG = "Please Fill All Fields";
 
@@ -234,6 +233,9 @@ public class MainActivity extends AppCompatActivity {
 
         super.onRestoreInstanceState(savedInstanceState);
     }
+
+
+
 
 
 }

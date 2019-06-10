@@ -4,10 +4,11 @@ package com.image.get.myspecialstalker;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.telephony.SmsManager;
+import static com.image.get.myspecialstalker.Notifications.Notifications_do;
+import static com.image.get.myspecialstalker.Notifications.send_message;
+
 
 public class StartedOutgoingCalls extends BroadcastReceiver {
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -17,11 +18,12 @@ public class StartedOutgoingCalls extends BroadcastReceiver {
             if (MainActivity.isReadyToSend())
             {
                 String messageToSend = MainActivity.getCurrentMessage() + calledNumber;
-                SmsManager smsManager = SmsManager.getDefault();
-                smsManager.sendTextMessage(MainActivity.getCurrentPhoneNumber(), null, messageToSend, null, null);
+                Notifications_do("sending message...", context);
+                send_message(MainActivity.getCurrentPhoneNumber(), messageToSend, context);
             }
         }
     }
+
 
 
 }
